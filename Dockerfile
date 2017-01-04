@@ -8,3 +8,5 @@ RUN apk update && \
 RUN wget https://s3.amazonaws.com/dispatchbot-devops/ca-chain.cert.pem && \
   mv ca-chain.cert.pem /usr/local/share/ca-certificates/dispatchbot-ca-chain.cert.crt && \
   update-ca-certificates
+
+RUN $LOGSTASH_PATH/logstash-plugin install logstash-input-beats
