@@ -1,8 +1,16 @@
-FROM logstash:5.1.1
+FROM docker.elastic.co/logstash/logstash:5.6.5
 
-RUN wget https://s3.amazonaws.com/dispatchbot-devops/ca-chain.cert.pem && \
-  mv ca-chain.cert.pem /usr/local/share/ca-certificates/dispatchbot-ca-chain.cert.crt && \
-  update-ca-certificates
+USER root
+RUN yum update -y && yum install -y ca-certificates
+RUN update-ca-trust force-enable
 
-RUN logstash-plugin install --version 3.1.12 logstash-input-beats
-RUN logstash-plugin install --version 6.2.0 logstash-output-elasticsearch
+RUN yum update -y && \
+  yum install -y wget && \
+  wget https://s3.amazonaws.com/dispatchbot-devops/ca-chain.cert.pem && \
+  mv ca-chain.cert.pem /etc/pki/ca-trust/source/anchors/dispatchbot-ca-chain.cert.crt && \
+  update-ca-trust extract && \
+  yum remove -y wget
+
+USER logstash
+RUN logstash-plugin install logstash-input-beats
+RUN logstash-plugin install logstash-output-elasticsearch
