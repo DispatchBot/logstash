@@ -11,6 +11,9 @@ RUN yum update -y && \
   update-ca-trust extract && \
   yum remove -y wget
 
+RUN rm -rf /usr/share/logstash/pipeline/
+COPY logstash.yml /usr/share/logstash/config/logstash.yml
+
 USER logstash
 RUN logstash-plugin install logstash-input-beats
 RUN logstash-plugin install logstash-output-elasticsearch
