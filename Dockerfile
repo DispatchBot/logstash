@@ -1,6 +1,7 @@
 FROM docker.elastic.co/logstash/logstash:5.6.5
 
 USER root
+RUN rm -rf /usr/share/logstash/pipeline/
 RUN yum update -y && yum install -y ca-certificates
 RUN update-ca-trust force-enable
 
@@ -11,9 +12,8 @@ RUN yum update -y && \
   update-ca-trust extract && \
   yum remove -y wget
 
-RUN rm -rf /usr/share/logstash/pipeline/
-COPY logstash.yml /usr/share/logstash/config/logstash.yml
-
 USER logstash
 RUN logstash-plugin install logstash-input-beats
 RUN logstash-plugin install logstash-output-elasticsearch
+
+COPY logstash.yml /usr/share/logstash/config/logstash.yml
